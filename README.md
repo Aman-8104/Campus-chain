@@ -1,33 +1,44 @@
 # 🔗 CampusChain
 
-CampusChain is a Web3-enabled SmartSurplus Platform aimed at optimizing food logistics and reducing waste. Built for hackathons and beyond, it seamlessly integrates AI-driven surplus forecasting with blockchain-backed transparency, all wrapped in a premium Cyberpunk Neon dark theme.
+CampusChain is a comprehensive **Blockchain-Powered Campus Fintech Platform** designed to modernize campus transactions. Built with a stunning Cyberpunk Neon aesthetic, it acts as a digital wallet allowing users to seamlessly send and receive money, track financial insights, and execute secure payments using QR codes.
 
 ## ✨ Features
 
-- **🤖 AI Surplus Forecasting**: Automatically predicts food surplus logistics based on uploaded provider data, ensuring no metric bloating and intelligent routing.
-- **⛓️ Blockchain Transparency**: Financial transactions and logistics data are secured and verified on-chain.
-- **📷 QR Scanner Integration**: Easily verify logistics and access credentials on the go.
-- **🎨 Premium UI/UX**: High-contrast, glassmorphism Cyberpunk Neon interface designed for optimal user experience.
-- **🔐 Secure Authentication**: Robust security model that differentiates standard user roles from administrators.
+- **💰 Smart Wallet**: Instantly send and receive money within the campus ecosystem.
+- **📷 QR Code Payments**: Generate and scan QR codes for frictionless, touchless transactions.
+- **📊 Financial Insights**: Visualize spending habits and transaction trends through interactive charts.
+- **📜 Transaction Histories & Receipts**: Maintain detailed histories of all transfers and generate downloadable PDF receipts.
+- **🛡️ Admin Dashboard**: Comprehensive oversight with role-based access for ecosystem administrators.
+- **🎨 Premium UI/UX**: High-contrast, glassmorphism Cyberpunk Neon interface powered by Tailwind CSS and Framer Motion.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React + Vite, Tailwind CSS (Custom Dark Theme UI)
-- **Backend**: Node.js, Express.js
-- **Blockchain**: Web3 Utilities (Custom Smart Contracts / Providers)
+**Frontend**
+- React 18 & Vite
+- Tailwind CSS (Custom Dark Theme UI)
+- Framer Motion (Animations)
+- Recharts (Analytics Data Visualization)
+- HTML5-QRCode & jsPDF
+
+**Backend & Database**
+- Node.js & Express.js
+- MongoDB & Mongoose (Schema Modeling)
+- JWT (JSON Web Tokens) Authentication
+- bcryptjs (Credential Encryption)
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-Ensure you have [Node.js](https://nodejs.org/) installed on your machine.
+Ensure you have [Node.js](https://nodejs.org/) installed and a running instance of [MongoDB](https://www.mongodb.com/). 
 
-### Running the Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
+### Setting up the Environment
+1. Create a `.env` file in the `backend` directory.
+2. Add your local MongoDB URI, JWT Secret, and server port configuration:
+```env
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/campuschain
+JWT_SECRET=your_jwt_secret
 ```
 
 ### Running the Backend
@@ -35,8 +46,18 @@ npm run dev
 ```bash
 cd backend
 npm install
-npm start
+npm run dev
+```
+*(Optional)* You can seed the database with initial dummy data by running `npm run seed`.
+
+### Running the Frontend
+
+In a new terminal:
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page or submit a Pull Request.
