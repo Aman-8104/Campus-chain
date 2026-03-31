@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import { useAuth } from '../context/AuthContext';
 import QRScanner from '../components/QRScanner';
 import api from '../api/axios';
@@ -47,7 +48,7 @@ const Dashboard = () => {
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 lg:p-12 overflow-auto">
+      <MainContent className="lg:px-12">
         {loading ? (
           <div className="space-y-4 animate-pulse">
             {[1, 2, 3].map(i => <div key={i} className="h-32 skeleton rounded-2xl" />)}
@@ -161,7 +162,7 @@ const Dashboard = () => {
             </motion.div>
           </motion.div>
         )}
-      </main>
+      </MainContent>
 
       {/* QR Scanner Modal */}
       {showScanner && (

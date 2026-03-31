@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -23,7 +24,7 @@ const Settings = () => {
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-8">
           <div>
             <h1 className="font-headline font-bold text-3xl text-on-surface">Settings & Profile</h1>
@@ -103,7 +104,7 @@ const Settings = () => {
             </div>
           </div>
         </motion.div>
-      </main>
+      </MainContent>
     </div>
   );
 };

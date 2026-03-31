@@ -18,49 +18,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// POST /api/wallet/topup — add funds (admin can topup any user, students topup themselves)
-router.post('/topup', auth, async (req, res) => {
-  try {
-    const { amount, targetUserId } = req.body;
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ success: false, message: 'Valid amount required' });
-    }
-    const userId = (req.user.role === 'admin' && targetUserId) ? targetUserId : req.user.id;
-    const wallet = await Wallet.findOneAndUpdate(
-      { userId },
-      {
-        $inc: { balance: amount, monthlyInflow: amount },
-        updatedAt: new Date()
-      },
-      { new: true }
-    );
-    if (!wallet) return res.status(404).json({ success: false, message: 'Wallet not found' });
 
-    // Create blockchain transaction record for topup
-    const prevHash = await getChainTip(Transaction);
-    const lastTx = await Transaction.findOne().sort({ blockIndex: -1 });
-    const blockIndex = lastTx ? lastTx.blockIndex + 1 : 0;
-    const txHash = generateTxHash(prevHash, {
-      senderId: req.user.id, receiverId: userId, amount, timestamp: Date.now()
-    });
-    await Transaction.create({
-      senderId: req.user.id,
-      receiverId: userId,
-      amount,
-      type: 'topup',
-      status: 'completed',
-      txHash,
-      prevHash,
-      blockIndex,
-      note: 'Wallet Top-Up'
-    });
-
-    res.json({ success: true, wallet, message: `$${amount} added successfully` });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: 'Server error' });
-  }
-});
 
 // GET /api/wallet/all — admin only: list all wallets
 router.get('/all', auth, role('admin'), async (req, res) => {

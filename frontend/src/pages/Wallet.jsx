@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -11,9 +12,6 @@ const Wallet = () => {
   const [wallet, setWallet] = useState(null);
   const [txs, setTxs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [topupAmount, setTopupAmount] = useState('');
-  const [topupLoading, setTopupLoading] = useState(false);
-  const [topupMsg, setTopupMsg] = useState('');
 
   useEffect(() => {
     Promise.all([api.get('/wallet'), api.get('/transactions?limit=10')])
@@ -24,25 +22,11 @@ const Wallet = () => {
   const fmt = n => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
   const fmtDate = d => new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-  const handleTopup = async e => {
-    e.preventDefault();
-    if (!topupAmount || topupAmount <= 0) return;
-    setTopupLoading(true); setTopupMsg('');
-    try {
-      const { data } = await api.post('/wallet/topup', { amount: Number(topupAmount) });
-      if (data.success) {
-        setWallet(data.wallet);
-        setTopupMsg(data.message);
-        setTopupAmount('');
-      }
-    } catch (err) { setTopupMsg(err.response?.data?.message || 'Failed'); }
-    finally { setTopupLoading(false); }
-  };
 
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         {loading ? (
           <div className="space-y-4 animate-pulse max-w-5xl mx-auto">
             {[1, 2, 3].map(i => <div key={i} className="h-32 skeleton rounded-xl" />)}
@@ -74,18 +58,6 @@ const Wallet = () => {
               ))}
             </div>
 
-            {/* Add Funds */}
-            <div className="card p-6">
-              <h2 className="font-headline font-semibold text-lg text-on-surface mb-4">Add Funds</h2>
-              <form onSubmit={handleTopup} className="flex gap-3">
-                <input type="number" min="1" step="0.01" className="input-field flex-1" placeholder="Enter amount (USD)"
-                  value={topupAmount} onChange={e => setTopupAmount(e.target.value)} id="topup-amount" />
-                <button type="submit" className="btn-primary px-8" id="topup-submit" disabled={topupLoading}>
-                  {topupLoading ? <span className="material-icons animate-spin text-base">sync</span> : 'Add Funds'}
-                </button>
-              </form>
-              {topupMsg && <p className="mt-2 text-sm text-tertiary font-body">{topupMsg}</p>}
-            </div>
 
             {/* Recent Activity */}
             <div>
@@ -134,7 +106,7 @@ const Wallet = () => {
             </div>
           </motion.div>
         )}
-      </main>
+      </MainContent>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -80,7 +81,7 @@ const SendMoney = () => {
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="mb-8">
@@ -244,7 +245,7 @@ const SendMoney = () => {
             )}
           </AnimatePresence>
         </div>
-      </main>
+      </MainContent>
     </div>
   );
 };

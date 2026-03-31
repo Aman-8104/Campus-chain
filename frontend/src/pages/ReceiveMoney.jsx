@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import { useAuth } from '../context/AuthContext';
 import QRCode from 'qrcode';
 
@@ -21,7 +22,7 @@ const ReceiveMoney = () => {
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="max-w-md mx-auto text-center space-y-6">
           <div>
             <h1 className="font-headline font-bold text-3xl text-on-surface">Receive Money</h1>
@@ -76,7 +77,7 @@ const ReceiveMoney = () => {
             </p>
           </div>
         </motion.div>
-      </main>
+      </MainContent>
     </div>
   );
 };

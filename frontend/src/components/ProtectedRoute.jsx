@@ -17,11 +17,21 @@ const ProtectedRoute = ({ children }) => {
   return token ? children : <Navigate to="/" replace />;
 };
 
+// Admin can access these routes
 export const AdminRoute = ({ children }) => {
   const { token, isAdmin, loading } = useAuth();
   if (loading) return null;
   if (!token) return <Navigate to="/" replace />;
   if (!isAdmin) return <Navigate to="/dashboard" replace />;
+  return children;
+};
+
+// Consumer routes — admins are blocked and redirected to admin panel
+export const UserOnlyRoute = ({ children }) => {
+  const { token, isAdmin, loading } = useAuth();
+  if (loading) return null;
+  if (!token) return <Navigate to="/" replace />;
+  if (isAdmin) return <Navigate to="/admin" replace />;
   return children;
 };
 

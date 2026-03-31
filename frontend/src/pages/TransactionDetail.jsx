@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
@@ -60,19 +61,19 @@ const TransactionDetail = () => {
     return (
       <div className="page-wrapper">
         <Sidebar />
-        <main className="flex-1 ml-64 p-8"><div className="max-w-3xl mx-auto space-y-4 animate-pulse">{[1,2,3].map(i => <div key={i} className="h-32 skeleton rounded-xl" />)}</div></main>
+        <MainContent><div className="max-w-3xl mx-auto space-y-4 animate-pulse">{[1,2,3].map(i => <div key={i} className="h-32 skeleton rounded-xl" />)}</div></MainContent>
       </div>
     );
   }
 
-  if (!tx) return <div className="page-wrapper"><Sidebar /><main className="flex-1 ml-64 p-8"><p className="text-error">Transaction not found</p></main></div>;
+  if (!tx) return <div className="page-wrapper"><Sidebar /><MainContent><p className="text-error">Transaction not found</p></MainContent></div>;
 
   const isIncoming = tx.receiverId?._id === user?.id || tx.receiverId === user?.id;
 
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-6">
           {/* Back */}
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors font-body text-sm">
@@ -147,7 +148,7 @@ const TransactionDetail = () => {
               </div>
               <div>
                 <p className="text-xs uppercase tracking-wide text-on-surface-variant mb-1 font-body">Previous Hash</p>
-                <p className="font-mono text-xs bg-surface-container-highest p-3 rounded-xl break-all text-on-surface-variant">{tx.prevHash}</p>
+                <p className="font-mono text-xs bg-surface-container-highest p-3 rounded-xl break-all text-on-surface">{tx.prevHash}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 text-tertiary">
@@ -165,7 +166,7 @@ const TransactionDetail = () => {
             <button onClick={() => navigate('/transactions')} className="btn-secondary flex-1">Back to History</button>
           </div>
         </motion.div>
-      </main>
+      </MainContent>
     </div>
   );
 };

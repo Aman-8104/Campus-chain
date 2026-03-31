@@ -111,6 +111,12 @@ router.post('/send', auth, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Insufficient balance' });
     }
 
+    // Check if sender is transaction-blocked by admin
+    const senderUser = await User.findById(req.user.id).select('txBlocked');
+    if (senderUser?.txBlocked) {
+      return res.status(403).json({ success: false, message: 'Your account has been restricted from making transactions. Please contact administration.' });
+    }
+
     // Debit sender
     await Wallet.findOneAndUpdate(
       { userId: req.user.id },

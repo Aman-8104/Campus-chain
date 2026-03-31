@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import api from '../api/axios';
 
 const Notifications = () => {
@@ -31,7 +32,7 @@ const Notifications = () => {
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto space-y-6">
           <div className="flex items-start justify-between">
             <div>
@@ -73,7 +74,7 @@ const Notifications = () => {
             </div>
           )}
         </motion.div>
-      </main>
+      </MainContent>
     </div>
   );
 };

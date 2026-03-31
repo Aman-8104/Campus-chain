@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Sidebar from '../components/Sidebar';
+import MainContent from '../components/MainContent';
 import api from '../api/axios';
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -15,26 +16,53 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [txs, setTxs] = useState([]);
+  const [vendorRequests, setVendorRequests] = useState([]);
+
+  const fetchVendorRequests = async () => {
+    try { const { data } = await api.get('/admin/vendor-requests'); setVendorRequests(data.vendors || []); } catch {}
+  };
 
   useEffect(() => {
     Promise.all([api.get('/admin/stats'), api.get('/admin/users'), api.get('/admin/transactions?limit=8')])
       .then(([s, u, t]) => { setStats(s.data.stats); setUsers(u.data.users); setTxs(t.data.transactions); })
       .finally(() => setLoading(false));
+    fetchVendorRequests();
   }, []);
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const searchUsers = async () => {
     const { data } = await api.get(`/admin/users?search=${search}`);
     setUsers(data.users);
   };
 
-  const updateRole = async (id, role) => {
-    const { data } = await api.patch(`/admin/users/${id}`, { role });
-    setUsers(u => u.map(usr => usr._id === id ? { ...usr, role: data.user.role } : usr));
+  const refreshUsers = async () => {
+    setRefreshing(true);
+    try {
+      const { data } = await api.get('/admin/users');
+      setUsers(data.users);
+      setSearch('');
+    } finally { setRefreshing(false); }
   };
 
   const toggleStatus = async (id, currentStatus) => {
     const { data } = await api.patch(`/admin/users/${id}`, { isActive: !currentStatus });
     setUsers(u => u.map(usr => usr._id === id ? { ...usr, isActive: data.user.isActive } : usr));
+  };
+
+  const toggleTxBlock = async (id, currentBlocked) => {
+    const { data } = await api.patch(`/admin/users/${id}`, { txBlocked: !currentBlocked });
+    setUsers(u => u.map(usr => usr._id === id ? { ...usr, txBlocked: data.user.txBlocked } : usr));
+  };
+
+  const approveVendor = async (id) => {
+    await api.patch(`/admin/vendor-requests/${id}/approve`);
+    setVendorRequests(v => v.map(r => r._id === id ? { ...r, status: 'active' } : r));
+  };
+
+  const rejectVendor = async (id) => {
+    await api.patch(`/admin/vendor-requests/${id}/reject`);
+    setVendorRequests(v => v.map(r => r._id === id ? { ...r, status: 'rejected' } : r));
   };
 
   const monthlyData = (stats?.monthlyData || []).map(d => ({
@@ -46,7 +74,7 @@ const Admin = () => {
   return (
     <div className="page-wrapper">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8 overflow-auto">
+      <MainContent>
         {loading ? (
           <div className="max-w-6xl mx-auto space-y-4 animate-pulse">{[1,2,3].map(i => <div key={i} className="h-28 skeleton rounded-xl" />)}</div>
         ) : (
@@ -123,27 +151,49 @@ const Admin = () => {
             {/* User Management */}
             <div className="card p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-headline font-semibold text-on-surface">User Management</h2>
+                <div className="flex items-center gap-3">
+                  <h2 className="font-headline font-semibold text-on-surface">User Management</h2>
+                  <span className="text-xs text-on-surface-variant font-body bg-surface-container px-2 py-0.5 rounded-full">
+                    {users.length} users
+                  </span>
+                </div>
                 <div className="flex gap-2">
-                  <input className="input-field text-sm w-56" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => e.key === 'Enter' && searchUsers()} id="admin-search" />
+                  <input className="input-field text-sm w-56" placeholder="Search users..." value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && searchUsers()}
+                    id="admin-search" />
                   <button onClick={searchUsers} className="btn-primary text-sm px-4" id="admin-search-btn">Search</button>
+                  <button
+                    onClick={refreshUsers}
+                    id="refresh-users-btn"
+                    title="Refresh user list"
+                    disabled={refreshing}
+                    className="flex items-center justify-center w-10 h-10 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-all disabled:opacity-50">
+                    <span className={`material-icons text-base ${refreshing ? 'animate-spin' : ''}`}>refresh</span>
+                  </button>
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm font-body">
                   <thead>
                     <tr className="text-xs uppercase tracking-wide text-on-surface-variant">
+                      <th className="text-left pb-3 font-medium w-8">#</th>
                       <th className="text-left pb-3 font-medium">User</th>
                       <th className="text-left pb-3 font-medium">Campus ID</th>
                       <th className="text-left pb-3 font-medium">Balance</th>
                       <th className="text-left pb-3 font-medium">Role</th>
-                      <th className="text-left pb-3 font-medium">Status</th>
+                      <th className="text-left pb-3 font-medium">Account</th>
+                      <th className="text-left pb-3 font-medium">Tx Status</th>
                       <th className="text-left pb-3 font-medium">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-container">
-                    {users.map(u => (
+                    {users.map((u, idx) => (
                       <tr key={u._id} className="hover:bg-surface-low transition-colors">
+                        {/* Serial Number */}
+                        <td className="py-3">
+                          <span className="text-xs font-mono text-on-surface-variant">{idx + 1}</span>
+                        </td>
                         <td className="py-3">
                           <div>
                             <p className="font-medium text-on-surface">{u.name}</p>
@@ -155,22 +205,42 @@ const Admin = () => {
                         <td className="py-3">
                           <span className={`badge-${u.role === 'admin' ? 'success' : u.role === 'vendor' ? 'pending' : 'success'} capitalize`}>{u.role}</span>
                         </td>
+                        {/* Account Status */}
                         <td className="py-3">
                           <span className={`badge-${u.isActive !== false ? 'success' : 'error'} capitalize`}>
                             {u.isActive !== false ? 'Active' : 'Suspended'}
                           </span>
                         </td>
+                        {/* Transaction Block Status */}
+                        <td className="py-3">
+                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold ${
+                            u.txBlocked
+                              ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                              : 'bg-tertiary/10 text-tertiary border border-tertiary/20'
+                          }`}>
+                            <span className="material-icons text-xs">{u.txBlocked ? 'block' : 'check_circle'}</span>
+                            {u.txBlocked ? 'Blocked' : 'Allowed'}
+                          </span>
+                        </td>
+                        {/* Actions */}
                         <td className="py-3">
                           <div className="flex gap-2 items-center">
-                            <select value={u.role} onChange={e => updateRole(u._id, e.target.value)}
-                              className="text-xs bg-surface-container border border-surface-container-high px-2 py-1.5 rounded-lg font-body focus:outline-none focus:border-primary text-on-surface">
-                              <option value="student">Student</option>
-                              <option value="admin">Admin</option>
-                              <option value="vendor">Vendor</option>
-                            </select>
-                            <button onClick={() => toggleStatus(u._id, u.isActive !== false)} 
-                              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${u.isActive !== false ? 'bg-error/10 text-error hover:bg-error/20 border border-error/20' : 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20 border border-tertiary/20'}`}>
+                            <button onClick={() => toggleStatus(u._id, u.isActive !== false)}
+                              className={`px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                                u.isActive !== false
+                                  ? 'bg-error/10 text-error hover:bg-error/20 border border-error/20'
+                                  : 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20 border border-tertiary/20'
+                              }`}>
                               {u.isActive !== false ? 'Suspend' : 'Activate'}
+                            </button>
+                            <button onClick={() => toggleTxBlock(u._id, !!u.txBlocked)}
+                              title={u.txBlocked ? 'Unblock transactions' : 'Block transactions'}
+                              className={`px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                                u.txBlocked
+                                  ? 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20 border border-tertiary/20'
+                                  : 'bg-orange-500/10 text-orange-400 hover:bg-orange-500/20 border border-orange-500/20'
+                              }`}>
+                              {u.txBlocked ? 'Unblock Tx' : 'Block Tx'}
                             </button>
                           </div>
                         </td>
@@ -179,6 +249,65 @@ const Admin = () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Vendor Applications */}
+            <div className="card p-6 border border-amber-500/10">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="material-icons text-amber-400">storefront</span>
+                <h2 className="font-headline font-semibold text-on-surface">Vendor Applications</h2>
+                {vendorRequests.filter(v => v.status === 'pending').length > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                    {vendorRequests.filter(v => v.status === 'pending').length} pending
+                  </span>
+                )}
+              </div>
+              {vendorRequests.length === 0 ? (
+                <p className="text-on-surface-variant font-body text-sm text-center py-6">No vendor applications yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {vendorRequests.map(v => (
+                    <div key={v._id} className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${
+                      v.status === 'pending' ? 'bg-amber-500/5 border-amber-500/20' :
+                      v.status === 'active' ? 'bg-tertiary/5 border-tertiary/20 opacity-70' :
+                      'bg-error/5 border-error/20 opacity-70'}`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        v.status === 'pending' ? 'bg-amber-500/20' : v.status === 'active' ? 'bg-tertiary/20' : 'bg-error/20'}`}>
+                        <span className={`material-icons text-lg ${
+                          v.status === 'pending' ? 'text-amber-400' : v.status === 'active' ? 'text-tertiary' : 'text-error'}`}>
+                          storefront
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-headline font-semibold text-on-surface">{v.businessName}</p>
+                        <p className="text-xs text-on-surface-variant font-body">{v.businessType} · {v.name} · {v.email}</p>
+                        {v.businessDescription && (
+                          <p className="text-xs text-on-surface-variant font-body mt-1 italic truncate">"{v.businessDescription}"</p>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
+                          v.status === 'pending' ? 'bg-amber-500/20 text-amber-400' :
+                          v.status === 'active' ? 'bg-tertiary/20 text-tertiary' : 'bg-error/20 text-error'}`}>
+                          {v.status === 'active' ? '✓ Approved' : v.status === 'rejected' ? '✗ Rejected' : '⏳ Pending'}
+                        </span>
+                        {v.status === 'pending' && (
+                          <div className="flex gap-2">
+                            <button onClick={() => approveVendor(v._id)}
+                              className="px-3 py-1.5 text-xs font-bold rounded-lg bg-tertiary/10 text-tertiary hover:bg-tertiary/20 border border-tertiary/20 transition-all">
+                              Approve
+                            </button>
+                            <button onClick={() => rejectVendor(v._id)}
+                              className="px-3 py-1.5 text-xs font-bold rounded-lg bg-error/10 text-error hover:bg-error/20 border border-error/20 transition-all">
+                              Reject
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Recent Ledger Activity */}
@@ -202,7 +331,7 @@ const Admin = () => {
             </div>
           </motion.div>
         )}
-      </main>
+      </MainContent>
     </div>
   );
 };

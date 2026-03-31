@@ -6,11 +6,16 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   passwordHash: { type: String, required: true },
   role: { type: String, enum: ['student', 'admin', 'vendor'], default: 'student' },
+  status: { type: String, enum: ['active', 'pending', 'rejected'], default: 'active' },
   campusId: { type: String, unique: true, sparse: true },
   avatar: { type: String, default: '' },
   department: { type: String, default: '' },
   phone: { type: String, default: '' },
+  businessName: { type: String, default: '' },
+  businessType: { type: String, default: '' },
+  businessDescription: { type: String, default: '' },
   isActive: { type: Boolean, default: true },
+  txBlocked: { type: Boolean, default: false },
 }, { timestamps: true });
 
 // Virtual for comparing passwords
