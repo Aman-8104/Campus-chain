@@ -19,6 +19,9 @@ import Admin from './pages/Admin';
 import AdminFund from './pages/AdminFund';
 import Signup from './pages/Signup';
 import VendorSignup from './pages/VendorSignup';
+import AdminLogin from './pages/AdminLogin';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const App = () => (
   <AuthProvider>
@@ -29,6 +32,9 @@ const App = () => (
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/vendor-signup" element={<VendorSignup />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* ── Admin-only ───────────────────────────── */}
           <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />

@@ -26,12 +26,13 @@ const userNavItems = [
 
 const Sidebar = () => {
   const { user, logout, isAdmin } = useAuth();
-  const { isOpen, toggle } = useSidebar();
+  const { isOpen, toggle, close } = useSidebar();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
+  const handleLogout = () => { logout(); navigate('/'); };
+  const handleNavClick = () => {
+    // On mobile close sidebar after navigation
+    if (window.innerWidth < 1024) close();
   };
 
   const navItems = isAdmin ? adminNavItems : userNavItems;
@@ -40,18 +41,13 @@ const Sidebar = () => {
     transition-all duration-200 hover:scale-105 active:scale-95 select-none
     ${isAdmin ? 'bg-amber-500/20 text-amber-400' : 'bg-primary-gradient text-white'}`;
 
-  return (
-    <motion.aside
-      animate={{ width: isOpen ? 256 : 64 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`fixed left-0 top-0 h-full flex flex-col z-50 shadow-ambient overflow-hidden
-        ${isAdmin ? 'bg-[#0a0a1a] border-r border-amber-500/20' : 'bg-surface-lowest border-r border-surface-container'}`}
-    >
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
       {/* Logo row */}
       <div className={`flex items-center gap-3 p-4 border-b flex-shrink-0
         ${isAdmin ? 'border-amber-500/20' : 'border-surface-container'}`}>
         <div
-          onClick={() => navigate(isAdmin ? '/admin' : '/dashboard')}
+          onClick={() => { navigate(isAdmin ? '/admin' : '/dashboard'); handleNavClick(); }}
           className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity
             ${isAdmin ? 'bg-amber-500/20' : 'bg-primary-gradient'}`}
         >
@@ -59,11 +55,8 @@ const Sidebar = () => {
         </div>
         <AnimatePresence>
           {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
+            <motion.div initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.2 }} className="overflow-hidden flex-1">
               <p className={`font-headline font-bold text-base leading-none whitespace-nowrap
                 ${isAdmin ? 'text-amber-400' : 'text-navy'}`}>CampusChain</p>
               <p className={`text-xs mt-0.5 whitespace-nowrap
@@ -73,6 +66,12 @@ const Sidebar = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        {/* Close button visible on mobile */}
+        {isOpen && (
+          <button onClick={close} className="lg:hidden ml-auto p-1 rounded-lg text-on-surface-variant hover:text-on-surface">
+            <span className="material-icons text-xl">close</span>
+          </button>
+        )}
       </div>
 
       {/* Admin Mode Badge */}
@@ -85,40 +84,27 @@ const Sidebar = () => {
         </div>
       )}
 
-      {/* ── User Avatar — clicking this toggles the sidebar ── */}
+      {/* User Avatar */}
       <div className={`px-3 py-3 flex-shrink-0 ${isOpen ? '' : 'flex justify-center'}`}>
         {isOpen ? (
-          /* Expanded: full info card, avatar click collapses */
           <div className={`flex items-center gap-3 p-3 rounded-xl
             ${isAdmin ? 'bg-amber-500/5 border border-amber-500/10' : 'bg-surface-low'}`}>
-            <div
-              onClick={toggle}
-              title="Click to collapse sidebar"
+            <div onClick={toggle} title="Click to collapse sidebar"
               className={`w-10 h-10 ${avatarBase} ring-2 ring-offset-2
-                ${isAdmin ? 'ring-amber-400/30 ring-offset-[#0a0a1a]' : 'ring-primary/20 ring-offset-surface-lowest'}`}
-            >
+                ${isAdmin ? 'ring-amber-400/30 ring-offset-[#0a0a1a]' : 'ring-primary/20 ring-offset-surface-lowest'}`}>
               <span className="text-sm">{user?.name?.charAt(0) || 'U'}</span>
             </div>
             <AnimatePresence>
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }} className="min-w-0"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="min-w-0">
                 <p className="font-headline font-semibold text-on-surface text-sm truncate">{user?.name}</p>
-                <p className={`text-xs capitalize ${isAdmin ? 'text-amber-400/70' : 'text-on-surface-variant'}`}>
-                  {user?.role}
-                </p>
+                <p className={`text-xs capitalize ${isAdmin ? 'text-amber-400/70' : 'text-on-surface-variant'}`}>{user?.role}</p>
               </motion.div>
             </AnimatePresence>
           </div>
         ) : (
-          /* Collapsed: just the avatar, clicking it expands */
-          <div
-            onClick={toggle}
-            title={`${user?.name} — click to expand`}
+          <div onClick={toggle} title={`${user?.name} — click to expand`}
             className={`w-10 h-10 ${avatarBase} ring-2 ring-offset-2
-              ${isAdmin ? 'ring-amber-400/40 ring-offset-[#0a0a1a]' : 'ring-primary/30 ring-offset-surface-lowest'}`}
-          >
+              ${isAdmin ? 'ring-amber-400/40 ring-offset-[#0a0a1a]' : 'ring-primary/30 ring-offset-surface-lowest'}`}>
             <span className="text-sm">{user?.name?.charAt(0) || 'U'}</span>
           </div>
         )}
@@ -127,39 +113,26 @@ const Sidebar = () => {
       {/* Navigation */}
       <nav className="flex-1 px-2 py-2 overflow-y-auto space-y-1">
         {navItems.map(item => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/admin'}
+          <NavLink key={item.to} to={item.to} end={item.to === '/admin'}
+            onClick={handleNavClick}
             title={!isOpen ? item.label : undefined}
             className={({ isActive }) =>
               `flex items-center gap-3 px-3 py-3 rounded-xl font-body font-medium text-sm transition-all duration-200
               ${!isOpen ? 'justify-center' : ''}
               ${isActive
-                ? isAdmin
-                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                  : 'bg-primary/10 text-primary'
-                : isAdmin
-                  ? 'text-amber-400/60 hover:bg-amber-500/5 hover:text-amber-400'
-                  : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
+                ? isAdmin ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-primary/10 text-primary'
+                : isAdmin ? 'text-amber-400/60 hover:bg-amber-500/5 hover:text-amber-400' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
               }`
-            }
-          >
+            }>
             {({ isActive }) => (
               <>
-                <span className={`material-icons text-xl flex-shrink-0
-                  ${isActive ? (isAdmin ? 'text-amber-400' : 'text-primary') : ''}`}>
+                <span className={`material-icons text-xl flex-shrink-0 ${isActive ? (isAdmin ? 'text-amber-400' : 'text-primary') : ''}`}>
                   {item.icon}
                 </span>
                 <AnimatePresence>
                   {isOpen && (
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      exit={{ opacity: 0, width: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden whitespace-nowrap"
-                    >
+                    <motion.span initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 'auto' }}
+                      exit={{ opacity: 0, width: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden whitespace-nowrap">
                       {item.label}
                     </motion.span>
                   )}
@@ -171,32 +144,56 @@ const Sidebar = () => {
       </nav>
 
       {/* Logout */}
-      <div className={`p-2 border-t flex-shrink-0
-        ${isAdmin ? 'border-amber-500/20' : 'border-surface-container'}`}>
-        <button
-          onClick={handleLogout}
-          title={!isOpen ? 'Logout' : undefined}
+      <div className={`p-2 border-t flex-shrink-0 ${isAdmin ? 'border-amber-500/20' : 'border-surface-container'}`}>
+        <button onClick={handleLogout} title={!isOpen ? 'Logout' : undefined}
           className={`flex items-center gap-3 w-full px-3 py-3 rounded-xl font-body font-medium text-sm
-            hover:bg-error/10 transition-all duration-200 text-error
-            ${!isOpen ? 'justify-center' : ''}`}
-        >
+            hover:bg-error/10 transition-all duration-200 text-error ${!isOpen ? 'justify-center' : ''}`}>
           <span className="material-icons text-xl flex-shrink-0">logout</span>
           <AnimatePresence>
             {isOpen && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden whitespace-nowrap"
-              >
+              <motion.span initial={{ opacity: 0, width: 0 }} animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden whitespace-nowrap">
                 Logout
               </motion.span>
             )}
           </AnimatePresence>
         </button>
       </div>
-    </motion.aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* ── MOBILE: full overlay drawer ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={close}
+              className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40" />
+            {/* Drawer */}
+            <motion.aside
+              initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className={`lg:hidden fixed left-0 top-0 h-full w-72 z-50 shadow-2xl overflow-hidden
+                ${isAdmin ? 'bg-[#0a0a1a] border-r border-amber-500/20' : 'bg-surface-lowest border-r border-surface-container'}`}>
+              {sidebarContent}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ── DESKTOP: persistent sidebar ── */}
+      <motion.aside
+        animate={{ width: isOpen ? 256 : 64 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className={`hidden lg:flex flex-col fixed left-0 top-0 h-full z-50 shadow-ambient overflow-hidden
+          ${isAdmin ? 'bg-[#0a0a1a] border-r border-amber-500/20' : 'bg-surface-lowest border-r border-surface-container'}`}>
+        {sidebarContent}
+      </motion.aside>
+    </>
   );
 };
 

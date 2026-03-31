@@ -54,58 +54,57 @@ const Dashboard = () => {
             {[1, 2, 3].map(i => <div key={i} className="h-32 skeleton rounded-2xl" />)}
           </div>
         ) : (
-          <motion.div variants={stagger.container} initial="initial" animate="animate" className="space-y-12 max-w-7xl mx-auto">
+          <motion.div variants={stagger.container} initial="initial" animate="animate" className="space-y-8 lg:space-y-12 max-w-7xl mx-auto">
             {/* Header */}
-            <motion.div variants={stagger.item} className="flex justify-between items-start">
-              <div>
-                <p className="text-sm uppercase tracking-widest text-on-surface-variant font-body mb-2">
+            <motion.div variants={stagger.item} className="flex justify-between items-start gap-4">
+              <div className="min-w-0">
+                <p className="text-xs lg:text-sm uppercase tracking-widest text-on-surface-variant font-body mb-1 lg:mb-2 truncate">
                   {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
-                <h1 className="font-headline font-bold text-5xl text-on-surface">Hello, {user?.name?.split(' ')[0]} 👋</h1>
+                <h1 className="font-headline font-bold text-3xl lg:text-5xl text-on-surface">Hello, {user?.name?.split(' ')[0]} 👋</h1>
               </div>
-              <button onClick={() => navigate('/notifications')} className="relative p-4 rounded-2xl bg-surface-low hover:bg-surface-container transition-colors">
-                <span className="material-icons text-3xl text-on-surface-variant">notifications</span>
-                <span className="absolute top-3 right-3 w-3 h-3 bg-error rounded-full ring-2 ring-white" />
+              <button onClick={() => navigate('/notifications')} className="relative p-3 lg:p-4 rounded-2xl bg-surface-low hover:bg-surface-container transition-colors flex-shrink-0">
+                <span className="material-icons text-2xl lg:text-3xl text-on-surface-variant">notifications</span>
+                <span className="absolute top-2 right-2 lg:top-3 lg:right-3 w-2.5 h-2.5 bg-error rounded-full ring-2 ring-white" />
               </button>
             </motion.div>
 
             {/* Balance Card */}
-            <motion.div variants={stagger.item} className="relative rounded-[2rem] bg-card-gradient p-12 text-white overflow-hidden shadow-float">
+            <motion.div variants={stagger.item} className="relative rounded-2xl lg:rounded-[2rem] bg-card-gradient p-6 lg:p-12 text-white overflow-hidden shadow-float">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.08),transparent_60%)]" />
               <div className="relative z-10">
-                <p className="text-white/70 text-sm uppercase tracking-widest font-body mb-4 font-semibold">Total Balance</p>
-                <p className="font-headline font-bold text-7xl mb-2 tracking-tight">{fmt(wallet?.balance)}</p>
-                <p className="text-white/60 text-lg font-body">{user?.campusId}</p>
-                <div className="mt-10 flex gap-12">
+                <p className="text-white/70 text-xs lg:text-sm uppercase tracking-widest font-body mb-2 lg:mb-4 font-semibold">Total Balance</p>
+                <p className="font-headline font-bold text-4xl lg:text-7xl mb-1 lg:mb-2 tracking-tight">{fmt(wallet?.balance)}</p>
+                <p className="text-white/60 text-base lg:text-lg font-body">{user?.campusId}</p>
+                <div className="mt-6 lg:mt-10 flex gap-6 lg:gap-12">
                   <div>
-                    <p className="text-white/60 text-sm mb-2 font-medium">Monthly Inflow</p>
-                    <p className="font-headline font-bold text-2xl text-emerald-300">+{fmt(wallet?.monthlyInflow)}</p>
+                    <p className="text-white/60 text-xs lg:text-sm mb-1 lg:mb-2 font-medium">Monthly Inflow</p>
+                    <p className="font-headline font-bold text-lg lg:text-2xl text-emerald-300">+{fmt(wallet?.monthlyInflow)}</p>
                   </div>
                   <div>
-                    <p className="text-white/60 text-sm mb-2 font-medium">Monthly Outflow</p>
-                    <p className="font-headline font-bold text-2xl text-pink-300">-{fmt(wallet?.monthlyOutflow)}</p>
+                    <p className="text-white/60 text-xs lg:text-sm mb-1 lg:mb-2 font-medium">Monthly Outflow</p>
+                    <p className="font-headline font-bold text-lg lg:text-2xl text-pink-300">-{fmt(wallet?.monthlyOutflow)}</p>
                   </div>
                 </div>
               </div>
-              {/* Card number decoration */}
-              <div className="absolute bottom-8 right-8 text-white/30 font-headline font-bold text-xl tracking-widest">
+              <div className="hidden sm:block absolute bottom-8 right-8 text-white/30 font-headline font-bold text-xl tracking-widest">
                 **** **** **** {user?.campusId?.slice(-4) || '0000'}
               </div>
             </motion.div>
 
             {/* Quick Actions */}
             <motion.div variants={stagger.item}>
-              <h2 className="font-headline font-bold text-2xl text-on-surface mb-6">Quick Actions</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <h2 className="font-headline font-bold text-xl lg:text-2xl text-on-surface mb-4 lg:mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-3 md:grid-cols-3 gap-3 lg:gap-6">
                 {quickActions.map(a => (
                   <button key={a.label} onClick={a.onClick}
-                    className="card p-8 text-left hover:shadow-float hover:-translate-y-1 transition-all duration-300 group"
+                    className="card p-4 lg:p-8 text-left hover:shadow-float hover:-translate-y-1 transition-all duration-300 group"
                   >
-                    <div className={`w-16 h-16 rounded-2xl ${a.color} flex items-center justify-center mb-6`}>
-                      <span className="material-icons text-3xl">{a.icon}</span>
+                    <div className={`w-10 h-10 lg:w-16 lg:h-16 rounded-xl lg:rounded-2xl ${a.color} flex items-center justify-center mb-3 lg:mb-6`}>
+                      <span className="material-icons text-xl lg:text-3xl">{a.icon}</span>
                     </div>
-                    <p className="font-headline font-bold text-on-surface text-xl mb-1">{a.label}</p>
-                    <p className="text-on-surface-variant text-sm font-body">{a.sub}</p>
+                    <p className="font-headline font-bold text-on-surface text-sm lg:text-xl mb-0.5 lg:mb-1">{a.label}</p>
+                    <p className="hidden sm:block text-on-surface-variant text-xs lg:text-sm font-body">{a.sub}</p>
                   </button>
                 ))}
               </div>
@@ -148,15 +147,15 @@ const Dashboard = () => {
             </motion.div>
 
             {/* Savings Goal Banner */}
-            <motion.div variants={stagger.item} className="card p-8 flex items-center gap-6 shadow-sm border border-surface-container">
-              <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                <span className="material-icons text-secondary text-3xl">savings</span>
+            <motion.div variants={stagger.item} className="card p-5 lg:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6 shadow-sm border border-surface-container">
+              <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-2xl bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                <span className="material-icons text-secondary text-2xl lg:text-3xl">savings</span>
               </div>
               <div className="flex-1">
-                <p className="font-headline font-bold text-on-surface text-xl mb-1">Savings Goal</p>
-                <p className="text-on-surface-variant text-base font-body">You're $150 away from your "New Laptop" goal. Keep it up!</p>
+                <p className="font-headline font-bold text-on-surface text-base lg:text-xl mb-1">Savings Goal</p>
+                <p className="text-on-surface-variant text-sm font-body">You're $150 away from your "New Laptop" goal. Keep it up!</p>
               </div>
-              <div className="w-48 h-3 bg-surface-container-highest rounded-full overflow-hidden">
+              <div className="w-full sm:w-48 h-2.5 bg-surface-container-highest rounded-full overflow-hidden">
                 <div className="h-full bg-secondary rounded-full" style={{ width: '78%' }} />
               </div>
             </motion.div>

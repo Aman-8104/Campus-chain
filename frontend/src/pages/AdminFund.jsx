@@ -100,15 +100,15 @@ const AdminFund = () => {
           {/* Header */}
           <div>
             <p className="text-xs uppercase tracking-widest font-body mb-1 text-amber-400/70">System Administrator</p>
-            <h1 className="font-headline font-bold text-3xl text-amber-400">Fund Distribution</h1>
-            <p className="text-on-surface-variant font-body mt-1">
+            <h1 className="font-headline font-bold text-2xl lg:text-3xl text-amber-400">Fund Distribution</h1>
+            <p className="text-on-surface-variant font-body mt-1 text-sm">
               Allocate funds directly to any user's wallet with a blockchain-verified record.
             </p>
           </div>
 
-          <div className="grid grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Left — Send Panel */}
-            <div className="col-span-3 space-y-5">
+            <div className="lg:col-span-3 space-y-5">
 
               {/* Recipient Search */}
               <div className="card p-6 border border-amber-500/10 space-y-4 relative z-10">
@@ -265,13 +265,13 @@ const AdminFund = () => {
             </div>
 
             {/* Right — Recent Fund Transfers */}
-            <div className="col-span-2">
-              <div className="card p-5 border border-amber-500/10 h-full">
+            <div className="lg:col-span-2">
+              <div className="card p-5 border border-amber-500/10">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="material-icons text-amber-400 text-xl">history</span>
                   <h2 className="font-headline font-semibold text-on-surface">Recent Transfers</h2>
                 </div>
-                <div className="space-y-2 overflow-y-auto max-h-[520px]">
+                <div className="space-y-2 overflow-y-auto max-h-64 lg:max-h-[520px]">
                   {historyLoading ? (
                     Array(4).fill(0).map((_, i) => <div key={i} className="h-14 skeleton rounded-xl" />)
                   ) : history.length === 0 ? (

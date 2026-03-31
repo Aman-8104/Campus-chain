@@ -87,7 +87,7 @@ const Admin = () => {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
               {[
                 { label: 'Total Active Users', value: stats?.totalUsers?.toLocaleString(), icon: 'group', color: 'text-primary' },
                 { label: 'Gross Revenue', value: fmt(stats?.grossVolume), icon: 'payments', color: 'text-tertiary' },
@@ -105,8 +105,8 @@ const Admin = () => {
             </div>
 
             {/* Charts Row */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="card p-6 col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <div className="card p-6 lg:col-span-2">
                 <h2 className="font-headline font-semibold text-on-surface mb-1">Spending Trends</h2>
                 <p className="text-xs text-on-surface-variant font-body mb-4">Daily volume across all departments</p>
                 <ResponsiveContainer width="100%" height={180}>
@@ -150,25 +150,25 @@ const Admin = () => {
 
             {/* User Management */}
             <div className="card p-6">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
                 <div className="flex items-center gap-3">
                   <h2 className="font-headline font-semibold text-on-surface">User Management</h2>
                   <span className="text-xs text-on-surface-variant font-body bg-surface-container px-2 py-0.5 rounded-full">
                     {users.length} users
                   </span>
                 </div>
-                <div className="flex gap-2">
-                  <input className="input-field text-sm w-56" placeholder="Search users..." value={search}
+                <div className="flex gap-2 sm:ml-auto">
+                  <input className="input-field text-sm flex-1 sm:w-48" placeholder="Search users..." value={search}
                     onChange={e => setSearch(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && searchUsers()}
                     id="admin-search" />
-                  <button onClick={searchUsers} className="btn-primary text-sm px-4" id="admin-search-btn">Search</button>
+                  <button onClick={searchUsers} className="btn-primary text-sm px-3" id="admin-search-btn">Search</button>
                   <button
                     onClick={refreshUsers}
                     id="refresh-users-btn"
                     title="Refresh user list"
                     disabled={refreshing}
-                    className="flex items-center justify-center w-10 h-10 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-all disabled:opacity-50">
+                    className="flex items-center justify-center w-9 h-9 rounded-xl border border-amber-500/20 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 transition-all disabled:opacity-50 flex-shrink-0">
                     <span className={`material-icons text-base ${refreshing ? 'animate-spin' : ''}`}>refresh</span>
                   </button>
                 </div>

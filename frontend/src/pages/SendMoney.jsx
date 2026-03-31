@@ -84,10 +84,10 @@ const SendMoney = () => {
       <MainContent>
         <div className="max-w-2xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-6 lg:mb-8">
             <p className="text-xs uppercase tracking-widest text-on-surface-variant mb-1 font-body">{user?.name}</p>
-            <h1 className="font-headline font-bold text-3xl text-on-surface">Send Money</h1>
-            <p className="text-on-surface-variant font-body mt-2">Transfer funds instantly to anyone on CampusChain.</p>
+            <h1 className="font-headline font-bold text-2xl lg:text-3xl text-on-surface">Send Money</h1>
+            <p className="text-on-surface-variant font-body mt-1 text-sm">Transfer funds instantly to anyone on CampusChain.</p>
           </div>
 
           {/* Step Indicator */}

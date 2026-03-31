@@ -147,11 +147,11 @@
 
   /* === Stat Card === */
   .stat-card {
-    @apply card p-6 space-y-1;
+    @apply card p-4 lg:p-6 space-y-1;
   }
 
   .stat-value {
-    @apply font-headline text-2xl font-bold text-on-surface;
+    @apply font-headline text-lg lg:text-2xl font-bold text-on-surface;
   }
 
   .stat-label {

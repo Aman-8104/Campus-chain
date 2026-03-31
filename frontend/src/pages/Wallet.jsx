@@ -41,7 +41,7 @@ const Wallet = () => {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
               {[
                 { label: 'Available Balance', value: fmt(wallet?.balance), icon: 'account_balance', color: 'text-primary' },
                 { label: 'Monthly Inflow', value: fmt(wallet?.monthlyInflow), icon: 'trending_up', color: 'text-tertiary' },

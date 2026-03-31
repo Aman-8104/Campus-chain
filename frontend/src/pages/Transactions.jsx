@@ -62,27 +62,27 @@ const Transactions = () => {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="max-w-5xl mx-auto space-y-6">
 
           {/* Header */}
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
             <div>
               {isAdmin && (
                 <p className="text-xs uppercase tracking-widest font-body mb-1 text-amber-400/70">System Administrator</p>
               )}
-              <h1 className={`font-headline font-bold text-3xl ${isAdmin ? 'text-amber-400' : 'text-on-surface'}`}>
+              <h1 className={`font-headline font-bold text-2xl lg:text-3xl ${isAdmin ? 'text-amber-400' : 'text-on-surface'}`}>
                 {isAdmin ? 'Global Transaction Ledger' : 'History'}
               </h1>
-              <p className="text-on-surface-variant font-body mt-1">
+              <p className="text-on-surface-variant font-body mt-1 text-sm">
                 {isAdmin
                   ? 'Review all transactions across the entire CampusChain network.'
                   : 'Review and manage all your institutional transactions.'}
               </p>
             </div>
-            <p className="text-xs text-on-surface-variant font-body mt-2">
+            <p className="text-xs text-on-surface-variant font-body">
               Showing {displayed.length} of {stats.total} transactions
             </p>
           </div>
 
           {/* Stats */}
-          <div className={`grid gap-4 ${isAdmin ? 'grid-cols-4' : 'grid-cols-3'}`}>
+          <div className={`grid gap-3 ${isAdmin ? 'grid-cols-2 lg:grid-cols-4' : 'grid-cols-3'}`}>
             {[
               { label: isAdmin ? 'Network Volume' : 'Total Volume', value: fmt(totalVolume), icon: 'storage', admin: false },
               { label: 'Success Rate', value: '98.2%', icon: 'verified', admin: false },
@@ -109,12 +109,12 @@ const Transactions = () => {
                   id="admin-tx-search"
                 />
               </div>
-              <button onClick={() => fetchTxs(1)} className="px-4 py-2 rounded-xl font-body text-sm font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all" id="admin-tx-refresh">
+              <button onClick={() => fetchTxs(1)} className="px-3 py-2 rounded-xl font-body text-sm font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500/20 transition-all flex-shrink-0" id="admin-tx-refresh">
                 <span className="material-icons text-base">refresh</span>
               </button>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <select className="input-field w-40 text-sm" value={filter.type} id="filter-type"
                 onChange={e => setFilter(f => ({ ...f, type: e.target.value }))}>
                 <option value="">All Types</option>

@@ -14,8 +14,13 @@ const userSchema = new mongoose.Schema({
   businessName: { type: String, default: '' },
   businessType: { type: String, default: '' },
   businessDescription: { type: String, default: '' },
+  recoveryEmail: { type: String, default: '' },
+  otpCode:       { type: String, default: null },
+  otpExpiry:     { type: Date,   default: null },
   isActive: { type: Boolean, default: true },
   txBlocked: { type: Boolean, default: false },
+  resetToken: { type: String, default: null },
+  resetTokenExpiry: { type: Date, default: null },
 }, { timestamps: true });
 
 // Virtual for comparing passwords
