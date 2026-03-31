@@ -10,6 +10,11 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const quickFill = (email, password) => {
+    setForm({ email, password });
+    setError('');
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(''); setLoading(true);
@@ -132,6 +137,62 @@ const Login = () => {
             <span className="material-icons text-base">admin_panel_settings</span>
             Admin Login →
           </Link>
+
+          {/* ── Quick Demo Logins ── */}
+          <div className="mt-6 pt-5 border-t border-surface-container/60">
+            <p className="text-center text-xs text-on-surface-variant font-body mb-3 uppercase tracking-widest">⚡ Quick Demo</p>
+            <div className="grid grid-cols-3 gap-2">
+
+              {/* Prachi — Student */}
+              <button
+                type="button"
+                id="demo-prachi"
+                onClick={() => quickFill('prachi@campus.edu', 'student123')}
+                className="flex flex-col items-center gap-2 px-2 py-3 rounded-xl border border-indigo-500/25 bg-indigo-500/6 hover:bg-indigo-500/15 transition-all"
+              >
+                <div className="w-9 h-9 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                  <span className="font-headline font-bold text-indigo-400 text-sm">P</span>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-headline font-semibold text-on-surface leading-none">Prachi</p>
+                  <p className="text-[10px] text-on-surface-variant font-body mt-0.5">Student</p>
+                </div>
+              </button>
+
+              {/* Campus Bookstore — Vendor */}
+              <button
+                type="button"
+                id="demo-vendor"
+                onClick={() => quickFill('vendor@campus.edu', 'vendor123')}
+                className="flex flex-col items-center gap-2 px-2 py-3 rounded-xl border border-emerald-500/25 bg-emerald-500/6 hover:bg-emerald-500/15 transition-all"
+              >
+                <div className="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                  <span className="material-icons text-emerald-400 text-base">storefront</span>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-headline font-semibold text-on-surface leading-none">Bookstore</p>
+                  <p className="text-[10px] text-on-surface-variant font-body mt-0.5">Vendor</p>
+                </div>
+              </button>
+
+              {/* Admin */}
+              <button
+                type="button"
+                id="demo-admin"
+                onClick={() => { navigate('/admin-login'); }}
+                className="flex flex-col items-center gap-2 px-2 py-3 rounded-xl border border-amber-500/25 bg-amber-500/6 hover:bg-amber-500/15 transition-all"
+              >
+                <div className="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center">
+                  <span className="material-icons text-amber-400 text-base">admin_panel_settings</span>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-headline font-semibold text-on-surface leading-none">Admin</p>
+                  <p className="text-[10px] text-on-surface-variant font-body mt-0.5">Dr. Vance</p>
+                </div>
+              </button>
+
+            </div>
+          </div>
 
           {/* Signup Links */}
           <div className="mt-6 text-center space-y-2">

@@ -179,14 +179,34 @@ const AdminLogin = () => {
           </form>
 
           {/* Back link */}
-          <div className="mt-8 text-center">
+          <div className="mt-6 text-center">
             <Link to="/" className="text-sm text-amber-400/50 hover:text-amber-400 font-body transition-colors flex items-center justify-center gap-1">
               <span className="material-icons text-sm">arrow_back</span>
               Back to User Login
             </Link>
           </div>
 
-          <p className="text-center text-xs text-amber-400/20 mt-6 font-body">
+          {/* Quick Demo */}
+          <div className="mt-5 pt-4 border-t border-amber-500/10">
+            <p className="text-center text-xs text-amber-400/40 font-body mb-3 uppercase tracking-widest">⚡ Quick Demo</p>
+            <button
+              type="button"
+              id="demo-admin-fill"
+              onClick={() => setForm({ email: 'admin@campus.edu', password: 'admin123' })}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/12 transition-all"
+            >
+              <div className="w-9 h-9 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                <span className="material-icons text-amber-400 text-base">admin_panel_settings</span>
+              </div>
+              <div className="text-left flex-1">
+                <p className="text-xs font-headline font-semibold text-amber-300 leading-none">Dr. Alexander Vance</p>
+                <p className="text-[10px] text-amber-400/50 font-body mt-0.5">Admin · admin@campus.edu</p>
+              </div>
+              <span className="material-icons text-amber-400/40 text-sm">arrow_forward</span>
+            </button>
+          </div>
+
+          <p className="text-center text-xs text-amber-400/20 mt-4 font-body">
             Unauthorised access attempts are logged and reported.
           </p>
         </div>
